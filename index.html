@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Circular Content Carousel with jQuery</title>
+        <title>Musical Carousel</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-        <meta name="description" content="Circular Content Carousel with jQuery" />
-        <meta name="keywords" content="jquery, conent slider, content carousel, circular, expanding, sliding, css3" />
-        <meta name="author" content="Codrops" />
         <link rel="shortcut icon" href="../favicon.ico"> 
         <link rel="stylesheet" type="text/css" href="css/demo.css" />
         <link rel="stylesheet" type="text/css" href="css/style.css" />
@@ -15,6 +12,112 @@
         <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
         <link href='http://fonts.googleapis.com/css?family=Coustard:900' rel='stylesheet' type='text/css' />
         <link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css' />
+
+        <!-- required -->
+        <link rel="stylesheet" type="text/css" href="css/360player.css" />
+        <link rel="stylesheet" type="text/css" href="css/360player-visualization.css" />
+
+        <!-- special IE-only canvas fix -->
+        <!--[if IE]><script type="text/javascript" src="js/excanvas.js"></script><![endif]-->
+
+        <!-- Apache-licensed animation library -->
+        <script type="text/javascript" src="js/berniecode-animator.js"></script>
+
+        <!-- the core stuff -->
+        <script type="text/javascript" src="js/soundmanager2.js"></script>
+        <script type="text/javascript" src="js/360player.js"></script>
+
+        <script type="text/javascript">
+            soundManager.setup({
+                // path to directory containing SM2 SWF
+                url: 'swf/'
+            });
+            
+            threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
+            threeSixtyPlayer.config.showHMSTime = true;
+
+            // enable some spectrum stuffs
+
+            threeSixtyPlayer.config.useWaveformData = true;
+            threeSixtyPlayer.config.useEQData = true;
+
+            // enable this in SM2 as well, as needed
+
+            if (threeSixtyPlayer.config.useWaveformData) {
+                soundManager.flash9Options.useWaveformData = true;
+            }
+            if (threeSixtyPlayer.config.useEQData) {
+                soundManager.flash9Options.useEQData = true;
+            }
+            if (threeSixtyPlayer.config.usePeakData) {
+                soundManager.flash9Options.usePeakData = true;
+            }
+
+            if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.useEQData || threeSixtyPlayer.flash9Options.usePeakData) {
+                // even if HTML5 supports MP3, prefer flash so the visualization features can be used.
+                soundManager.preferFlash = true;
+            }
+
+            // favicon is expensive CPU-wise, but can be used.
+            if (window.location.href.match(/hifi/i)) {
+                threeSixtyPlayer.config.useFavIcon = true;
+            }
+
+            if (window.location.href.match(/html5/i)) {
+                // for testing IE 9, etc.
+                soundManager.useHTML5Audio = true;
+            }
+        </script>
+
+        <!-- stuff you don't need -->
+        <!-- makes the fonts nicer etc. -->
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/demo.css" />
+
+        <!-- soundManager.useFlashBlock: related CSS -->
+        <link rel="stylesheet" type="text/css" href="css/flashblock.css" />
+
+        <style type="text/css">
+
+            body {
+                background-image: none;
+            }
+
+            #left h2 {
+                padding-top:0px;
+                margin-bottom:0.25em;
+                color:#666;
+            }
+
+            pre.block {
+                margin-top:0.5em;
+            }
+
+            /* special case */
+
+            #left {
+                width:auto;
+                max-width:100%;
+            }
+
+            .ui360 span {
+                vertical-align: top;
+            }
+
+        </style>
+        <!-- DEMO only, customization UI: Yahoo! YUI colorpicker stuff -->
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/slider/assets/skins/sam/slider.css" />
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/colorpicker/assets/skins/sam/colorpicker.css" />
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/colorpicker/colorpicker-min.js"></script>
+
+        <!-- demo configuration stuff, you don't need this -->
+        <link rel="stylesheet" type="text/css" href="css/demo-slider-controls.css" />
+        <script type="text/javascript" src="js/demo-slider-controls.js"></script>
     </head>
     <body>
         <div class="container">
@@ -25,259 +128,215 @@
             <div id="ca-container" class="ca-container">
                 <div class="ca-wrapper">
                     <div class="ca-item ca-item-1">
-                        <div class="ca-item-main">
-                            <div id="jquery_jplayer_1"></div>
-                            <div id="jp_container_1">
-                                <a href="#" class="jp-play">Play</a>
-                                <a href="#" class="jp-pause">Pause</a>
-                            </div>
-                            <h3>Stop factory farming</h3>
+                        <div class="ca-item-main">                            
+                            <div class="ui360 ui360-vis"><a href="#.mp3">&nbsp;</a></div>
+                            <h3>Title Track 1</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>The greatness of a nation and its moral progress can be judged by the way in which its animals are treated.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Animals are not commodities</h6>
+                                <h6>Title Track 1</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-2">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Respect Life &amp; Rights</h3>
+
+                            <h3>Title Track 2</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>I hold that the more helpless a creature, the more entitled it is to protection by man from the cruelty of man.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Would you eat your dog?</h6>
+                                <h6>Title Track 2</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-3">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Become 100% meat-free</h3>
+
+                            <h3>Title Track 3</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>I feel that spiritual progress does demand at some stage that we should cease to kill our fellow creatures for the satisfaction of our bodily wants.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>You can change the world</h6>
+                                <h6>Title Track 3</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-4">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Make a difference</h3>
+
+                            <h3>Title Track 4</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>A man is but the product of his thoughts what he thinks, he becomes.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Think globally, act locally</h6>
+                                <h6>Title Track 4</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-5">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Say no to killing</h3>
+
+                            <h3>Title Track 5</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>A weak man is just by accident. A strong but non-violent man is unjust by accident.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Animals have rights, too!</h6>
+                                <h6>Title Track 5</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-6">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Don't believe the lies</h3>
+
+                            <h3>Title Track 6</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>An error does not become truth by reason of multiplied propagation, nor does truth become error because nobody sees it.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>How essential is meat?</h6>
+                                <h6>Title Track 6</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-7">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>Save the planet</h3>
+
+                            <h3>Title Track 7</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>A small body of determined spirits fired by an unquenchable faith in their mission can alter the course of history.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Collateral damage?</h6>
+                                <h6>Title Track 7</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="ca-item ca-item-8">
                         <div class="ca-item-main">
-                            <div class="ca-icon"></div>
-                            <h3>It's time to move on</h3>
+
+                            <h3>Title Track 8</h3>
                             <h4>
                                 <span class="ca-quote">&ldquo;</span>
-                                <span>A nation's culture resides in the hearts and in the soul of its people.</span>
+                                <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </span>
                             </h4>
                             <a href="#" class="ca-more">more...</a>
                         </div>
                         <div class="ca-content-wrapper">
                             <div class="ca-content">
-                                <h6>Let's finally become humans</h6>
+                                <h6>Title Track 8</h6>
                                 <a href="#" class="ca-close">close</a>
                                 <div class="ca-content-text">
-                                    <p>I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now.</p>
-                                    <p>When, while the lovely valley teems with vapour around me, and the meridian sun strikes the upper surface of the impenetrable foliage of my trees, and but a few stray gleams steal into the inner sanctuary, I throw myself down among the tall grass by the trickling stream;</p>
-                                    <p>She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                 </div>
                                 <ul>
                                     <li><a href="#">Read more</a></li>
                                     <li><a href="#">Share this</a></li>
-                                    <li><a href="#">Become a member</a></li>
-                                    <li><a href="#">Donate</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <h5>Quotes by Mohandas Gandhi</h5>
+            <h5>................................................</h5>
         </div>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/ui.jquery.js"></script>
         <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
         <!-- the jScrollPane script -->
         <script type="text/javascript" src="js/jquery.mousewheel.js"></script>
         <script type="text/javascript" src="js/jquery.contentcarousel.js"></script>
-        <script type="text/javascript" src="js/jquery.jplayer.min.js"></script>
+
         <script type="text/javascript">
-            $('#ca-container').contentcarousel();
-            $(document).ready(function(){
-                $("#jquery_jplayer_1").jPlayer({
-                    ready: function () {
-                        $(this).jPlayer("setMedia", {
-                            m4a: "/media/mysound.mp4",
-                            oga: "/media/mysound.ogg"
-                        });
-                    },
-                    swfPath: "/js",
-                    supplied: "m4a, oga"
-                });
-            });
-        </script>
+            $('#ca-container').contentcarousel();     
+            if (window.location.toString().match(/#customize/i)) {
+                document.getElementById('config-link').style.display = 'none';
+                document.getElementById('config-ui').style.display = 'block';    
+            }
+        </script>        
     </body>
 </html>
